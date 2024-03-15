@@ -29,7 +29,7 @@ async def provide_transaction(
         raise ClientException(
             status_code=HTTP_404_NOT_FOUND,
             detail="No database result matching query"
-        )
+        ) from exc
 
 
 db_config = SQLAlchemyAsyncConfig(
