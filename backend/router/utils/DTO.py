@@ -10,7 +10,7 @@ T = TypeVar("T", bound=DeclarativeBase)
 
 class DTOGenerator(Generic[T]):
     model_type: type[T]
-    base_read_kwargs: dict[str, Any] = {"max_nested_depth": 1}
+    base_read_kwargs: dict[str, Any] = {"max_nested_depth": 0}
     base_write_kwargs: dict[str, Any] = {"max_nested_depth": 0, "partial": True}
 
     def __class_getitem__(cls, model_type: type[T]):
