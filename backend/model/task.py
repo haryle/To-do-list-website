@@ -1,54 +1,50 @@
-import uuid
 from typing import Optional, TYPE_CHECKING
-from uuid import UUID
 
-from sqlalchemy import ForeignKey
+from litestar.dto import dto_field
+from sqlalchemy import Column, ForeignKey, Table, UUID as UUID_SQL
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-
+from uuid import UUID
 from backend.model.base import Base
 
 if TYPE_CHECKING:
     from backend.model.project import Project
 
-
-class TaskRelation(Base):
-    __tablename__ = "task_relation_table"
-
-    child_id: Mapped[UUID] = mapped_column(
-        ForeignKey("task_table.id"), primary_key=True
-    )
-    parent_id: Mapped[UUID] = mapped_column(
-        ForeignKey("task_table.id"), primary_key=True
-    )
+task_relation = Table(
+    "task_relation",
+    Base.metadata,
+    Column("parent_id", UUID_SQL, ForeignKey("task_table.id"), primary_key=True),
+    Column("child_id", UUID_SQL, ForeignKey("task_table.id"), primary_key=True),
+)
 
 
 class Task(Base):
     __tablename__ = "task_table"
 
-    id: Mapped[UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
     title: Mapped[str]
     status: Mapped[bool]
 
-    project_id: Mapped[Optional[UUID]] = mapped_column(ForeignKey("project_table.id"))
+    project_id: Mapped[UUID] = mapped_column(ForeignKey("project_table.id"))
 
     # Relations
-    project: Mapped[Optional["Project"]] = relationship(back_populates="tasks")
-    children: Mapped[Optional[list["Task"]]] = relationship(
+    project: Mapped[Optional["Project"]] = relationship(back_populates="tasks", lazy="immediate")
+    children: Mapped[list["Task"]] = relationship(
         "Task",
-        secondary="task_relation_table",
-        primaryjoin=id == TaskRelation.parent_id,
-        secondaryjoin=id == TaskRelation.child_id,
+        secondary="task_relation",
+        primaryjoin="Task.id == task_relation.c.parent_id",
+        secondaryjoin="Task.id == task_relation.c.child_id",
         back_populates="parents",
-        lazy="selectin"
+        info=dto_field("read-only"),
+        lazy="immediate"
 
     )
-    parents: Mapped[Optional[list["Task"]]] = relationship(
+    parents: Mapped[list["Task"]] = relationship(
         "Task",
-        secondary="task_relation_table",
-        primaryjoin=id == TaskRelation.child_id,
-        secondaryjoin=id == TaskRelation.parent_id,
+        secondary="task_relation",
+        primaryjoin="Task.id == task_relation.c.child_id",
+        secondaryjoin="Task.id == task_relation.c.parent_id",
         back_populates="children",
-        lazy="selectin"
+        info=dto_field("read-only"),
+        lazy="immediate"
     )
 
     def __repr__(self) -> str:
