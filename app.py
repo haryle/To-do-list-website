@@ -7,11 +7,19 @@ from litestar import Litestar
 from litestar.exceptions import ClientException
 from litestar.plugins.sqlalchemy import SQLAlchemyAsyncConfig, SQLAlchemyPlugin
 from litestar.status_codes import HTTP_404_NOT_FOUND, HTTP_409_CONFLICT
+from sqlalchemy import Engine, event
 from sqlalchemy.exc import IntegrityError, NoResultFound
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from backend.model.base import Base
-from backend.router.project import ProjectController
+from backend.model import Base
+from backend.router import ProjectController, TaskController
+
+
+@event.listens_for(Engine, "connect")
+def set_sqlite_pragma(dbapi_connection, connection_record):
+    cursor = dbapi_connection.cursor()
+    cursor.execute("PRAGMA foreign_keys=ON")
+    cursor.close()
 
 
 async def provide_transaction(
@@ -40,7 +48,10 @@ db_config = SQLAlchemyAsyncConfig(
 )
 
 app = Litestar(
-    [ProjectController],
+    [
+        ProjectController,
+        TaskController
+    ],
     dependencies={"transaction": provide_transaction},
     plugins=[SQLAlchemyPlugin(db_config)],
 )
