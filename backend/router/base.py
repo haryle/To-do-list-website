@@ -18,6 +18,7 @@ T = TypeVar("T", bound=DeclarativeBase)
 
 async def create_item(session: "AsyncSession", data: Any) -> Any:
     session.add(data)
+    await session.flush()
     return data
 
 
