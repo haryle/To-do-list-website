@@ -23,7 +23,7 @@ task_relation = Table(
 class Task(Base):
     __tablename__ = "task_table"
 
-    title: Mapped[str]
+    title: Mapped[str] = mapped_column(unique=True)
     status: Mapped[bool]
     description: Mapped[Optional[str]]
     deadline: Mapped[Optional[datetime.datetime]]

@@ -1,5 +1,5 @@
 from litestar.dto import dto_field
-from sqlalchemy.orm import Mapped, relationship
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from backend.model.base import Base
 from backend.model.task import Task
@@ -8,7 +8,7 @@ from backend.model.task import Task
 class Project(Base):
     __tablename__ = "project_table"
 
-    title: Mapped[str]
+    title: Mapped[str] = mapped_column(unique=True)
 
     # Relationship
     tasks: Mapped[list["Task"]] = relationship(
