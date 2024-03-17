@@ -1,13 +1,16 @@
+import datetime
 from typing import Optional, TYPE_CHECKING
+from uuid import UUID
 
 from litestar.dto import dto_field
 from sqlalchemy import Column, ForeignKey, Table, UUID as UUID_SQL
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from uuid import UUID
+
 from backend.model.base import Base
 
 if TYPE_CHECKING:
     from backend.model.project import Project
+    from backend.model.tag import Tag
 
 task_relation = Table(
     "task_relation",
@@ -22,11 +25,15 @@ class Task(Base):
 
     title: Mapped[str]
     status: Mapped[bool]
+    description: Mapped[Optional[str]]
+    deadline: Mapped[Optional[datetime.datetime]]
 
     project_id: Mapped[UUID] = mapped_column(ForeignKey("project_table.id"))
 
     # Relations
-    project: Mapped[Optional["Project"]] = relationship(back_populates="tasks", lazy="immediate")
+    project: Mapped[Optional["Project"]] = relationship(
+        back_populates="tasks", lazy="selectin"
+    )
     children: Mapped[list["Task"]] = relationship(
         "Task",
         secondary="task_relation",
@@ -34,7 +41,7 @@ class Task(Base):
         secondaryjoin="Task.id == task_relation.c.child_id",
         back_populates="parents",
         info=dto_field("read-only"),
-        lazy="immediate"
+        lazy="selectin"
 
     )
     parents: Mapped[list["Task"]] = relationship(
@@ -44,8 +51,13 @@ class Task(Base):
         secondaryjoin="Task.id == task_relation.c.parent_id",
         back_populates="children",
         info=dto_field("read-only"),
-        lazy="immediate"
+        lazy="selectin"
     )
 
-    def __repr__(self) -> str:
-        return f"(Task: {self.title}, Status: {self.status})"
+    tags: Mapped[list["Tag"]] = relationship(
+        "Tag",
+        secondary="tag_task_relation",
+        back_populates="tasks",
+        info=dto_field("read-only"),
+        lazy="selectin"
+    )
