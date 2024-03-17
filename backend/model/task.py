@@ -10,6 +10,7 @@ from backend.model.base import Base
 
 if TYPE_CHECKING:
     from backend.model.project import Project
+    from backend.model.tag import Tag
 
 task_relation = Table(
     "task_relation",
@@ -32,7 +33,7 @@ class Task(Base):
     # Relations
     project: Mapped[Optional["Project"]] = relationship(
         back_populates="tasks", lazy="immediate"
-        )
+    )
     children: Mapped[list["Task"]] = relationship(
         "Task",
         secondary="task_relation",
@@ -53,5 +54,9 @@ class Task(Base):
         lazy="immediate"
     )
 
-    def __repr__(self) -> str:
-        return f"(Task: {self.title}, Status: {self.status})"
+    tags: Mapped[list["Tag"]] = relationship(
+        "Tag",
+        secondary="tag_task_relation",
+        back_populates="tasks",
+        info=dto_field("read-only"),
+    )
