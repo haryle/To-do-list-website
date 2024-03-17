@@ -25,14 +25,14 @@ class Task(Base):
 
     title: Mapped[str]
     status: Mapped[bool]
-    description: Mapped[str]
-    deadline: Mapped[datetime.datetime]
+    description: Mapped[Optional[str]]
+    deadline: Mapped[Optional[datetime.datetime]]
 
     project_id: Mapped[UUID] = mapped_column(ForeignKey("project_table.id"))
 
     # Relations
     project: Mapped[Optional["Project"]] = relationship(
-        back_populates="tasks", lazy="immediate"
+        back_populates="tasks", lazy="selectin"
     )
     children: Mapped[list["Task"]] = relationship(
         "Task",
@@ -41,7 +41,7 @@ class Task(Base):
         secondaryjoin="Task.id == task_relation.c.child_id",
         back_populates="parents",
         info=dto_field("read-only"),
-        lazy="immediate"
+        lazy="selectin"
 
     )
     parents: Mapped[list["Task"]] = relationship(
@@ -51,7 +51,7 @@ class Task(Base):
         secondaryjoin="Task.id == task_relation.c.parent_id",
         back_populates="children",
         info=dto_field("read-only"),
-        lazy="immediate"
+        lazy="selectin"
     )
 
     tags: Mapped[list["Tag"]] = relationship(
@@ -59,4 +59,5 @@ class Task(Base):
         secondary="tag_task_relation",
         back_populates="tasks",
         info=dto_field("read-only"),
+        lazy="selectin"
     )
