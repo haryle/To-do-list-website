@@ -1,9 +1,11 @@
+import datetime
 from typing import Optional, TYPE_CHECKING
+from uuid import UUID
 
 from litestar.dto import dto_field
 from sqlalchemy import Column, ForeignKey, Table, UUID as UUID_SQL
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from uuid import UUID
+
 from backend.model.base import Base
 
 if TYPE_CHECKING:
@@ -22,11 +24,15 @@ class Task(Base):
 
     title: Mapped[str]
     status: Mapped[bool]
+    description: Mapped[str]
+    deadline: Mapped[datetime.datetime]
 
     project_id: Mapped[UUID] = mapped_column(ForeignKey("project_table.id"))
 
     # Relations
-    project: Mapped[Optional["Project"]] = relationship(back_populates="tasks", lazy="immediate")
+    project: Mapped[Optional["Project"]] = relationship(
+        back_populates="tasks", lazy="immediate"
+        )
     children: Mapped[list["Task"]] = relationship(
         "Task",
         secondary="task_relation",
