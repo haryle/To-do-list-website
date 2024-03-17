@@ -1,11 +1,10 @@
-import uuid
-
 from sqlalchemy import create_engine
 from sqlalchemy import event
 from sqlalchemy.engine import Engine
 from sqlalchemy.orm import create_session
 
-from backend.model import Project, Task, Base
+from backend.model import Base, Project, Task
+
 
 @event.listens_for(Engine, "connect")
 def set_sqlite_pragma(dbapi_connection, connection_record):
