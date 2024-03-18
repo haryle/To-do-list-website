@@ -9,7 +9,7 @@ from backend.helpers import create_db_config, provide_transaction
 from backend.router import ProjectController, TagController, TaskController
 
 
-@pytest.fixture(scope="function")
+@pytest.fixture(scope="module")
 def test_client() -> AsyncTestClient:
     p = Path("test.sqlite")
     db_config = create_db_config("test.sqlite")

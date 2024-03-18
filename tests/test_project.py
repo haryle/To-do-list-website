@@ -1,87 +1,59 @@
+import random
+
 import pytest
-from httpx import Response
+from litestar.testing import AsyncTestClient
 
 from backend.model import Project
+from tests.helpers import ResponseValidator
 
 
 class TestProject:
-    title: str = "test_project"
+    titles = ["first", "second", "third"]
+    ids = {}
 
-    @pytest.fixture(scope="function")
-    async def project_response(self, test_client) -> Response:
-        project = Project(title=self.title)
-        async with test_client as client:
-            response = await client.post(
-                "/project", json=project.to_dict()
-            )
-        yield response
-        async with test_client as client:
-            await client.delete(f"/project/{project.id}")
+    @pytest.fixture(scope="class", autouse=True)
+    async def create_item(self, test_client: AsyncTestClient):
+        async def _create_item(title):
+            project = Project(title=title)
+            async with test_client as client:
+                response = await client.post("/project", json=project.to_dict())
+                ResponseValidator.validate_item_created(response, title=title)
+                project_id = response.json()["id"]
+            return project_id
 
-    async def test_response_is_successful(self, project_response):
-        assert project_response.status_code == 201
-        assert project_response.json()["title"] == self.title
-        assert project_response.json()["id"] is not None
+        titles = random.sample(self.titles, len(self.titles))
+        for title in titles:
+            self.ids[title] = await _create_item(title)
 
-    async def test_create_another_project_successful(
-            self, project_response, test_client
-            ):
-        project = Project(title=self.title + "_1")
-        async with test_client as client:
-            response = await client.post(
-                "/project", json=project.to_dict()
-            )
-            assert response.status_code == 201
-            assert response.json()["title"] == self.title + "_1"
-            project_id = response.json()["id"]
-            assert response.json()["id"] is not None
-            response = await client.get("/project")
-            assert response.status_code == 200
-            assert len(response.json()) == 2
-            await client.delete(f"/project/{project_id}")
-            response = await client.get("/project")
-            assert response.status_code == 200
-            assert len(response.json()) == 1
+        yield
 
-    async def test_find_by_id_return_the_same_obj(self, project_response, test_client):
-        project_id = project_response.json()["id"]
-        async with test_client as client:
-            result = await client.get(f"/project/{project_id}")
-            assert result.status_code == 200
-            assert result.json()["id"] == project_id
-            assert result.json()["title"] == self.title
+        async def _destroy_item(project_id):
+            async with test_client as client:
+                response = await client.delete(f"/project/{project_id}")
+                ResponseValidator.validate_item_deleted(response)
+                response = await client.get(f"/project/{project_id}")
+                ResponseValidator.validate_item_not_found(response)
 
-    async def test_find_by_title_return_the_same_obj(
-            self, project_response, test_client
-    ):
-        project_id = project_response.json()["id"]
-        async with test_client as client:
-            result = await client.get(f"/project/", params={"title": self.title})
-            assert result.status_code == 200
-            assert len(result.json()) == 1
-            assert result.json()[0]["id"] == project_id
-            assert result.json()[0]["title"] == self.title
+        for title, id in self.ids.items():
+            await _destroy_item(id)
 
-    async def test_find_wrong_title_return_nothing(self, project_response, test_client):
+    async def test_items_successfully_created(self, test_client):
         async with test_client as client:
-            result = await client.get(f"/project/", params={"title": self.title + "_"})
-            assert result.status_code == 200
-            assert len(result.json()) == 0
+            for title, project_id in self.ids.items():
+                response = await client.get(f"/project/{project_id}")
+                ResponseValidator.validate_item_exist(response, title=title)
+                response = await client.get("/project", params={"title": title})
+                assert len(response.json()) == 1
+                ResponseValidator.validate_response_body(
+                    response.json()[0], title=title
+                )
+                response = await client.get("/project")
+                assert len(response.json()) == len(self.titles)
 
-    async def test_create_same_title_integrity_error(
-            self, project_response, test_client
-    ):
-        project = Project(title=self.title)
+    async def test_create_project_same_title_throws_error(self, test_client):
         async with test_client as client:
-            response = await client.post(
-                "/project", json=project.to_dict()
-            )
-            assert response.status_code == 409
+            project = Project(title=self.titles[0])
+            response = await client.post("/project", json=project.to_dict())
+            ResponseValidator.validate_item_conflict(response)
 
-    async def test_delete_object_no_longer_exist(self, project_response, test_client):
-        project_id = project_response.json()["id"]
-        async with test_client as client:
-            response = await client.delete(f"/project/{project_id}")
-            assert response.status_code == 204
-            result = await client.get(f"/project/{project_id}")
-            assert result.status_code == 404
+
