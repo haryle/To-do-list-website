@@ -56,7 +56,6 @@ async def update_item(
 async def delete_item(session: "AsyncSession", id: "UUID", table: type[Any]) -> Any:
     stmt = remove(table).where(table.__table__.c.id == id)
     await session.execute(stmt)
-    return
 
 
 class GenericController(Controller, Generic[T]):
