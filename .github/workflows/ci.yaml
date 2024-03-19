@@ -20,15 +20,17 @@ jobs:
     needs: setup
     uses: ./.github/workflows/validate_ci.yaml
 
-#  test:
-#    name: "test (${{ matrix.python-version }})"
-#    strategy:
-#      fail-fast: true
-#      matrix:
-#        python-version: [ "3.11", "3.12" ]
-#    uses: ./.github/workflows/test_ci.yaml
-#    with:
-#      python-version: ${{ matrix.python-version }}
+  test:
+    name: "test (${{ matrix.python-version }})"
+    strategy:
+      fail-fast: true
+      matrix:
+        python-version: [ "3.11", "3.12" ]
+    uses: ./.github/workflows/test_ci.yaml
+    with:
+      python-version: ${{ matrix.python-version }}
+      do-coverage: ${{ matrix.python-version == 3.12 }}
+
 #
 #  coverage:
 #    needs: test

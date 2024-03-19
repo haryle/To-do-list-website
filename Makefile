@@ -13,7 +13,7 @@ prod:
 
 
 test:
-	$(CMD) pytest tests 	--cov=$(MODULE)
+	$(CMD) pytest tests --cov=$(MODULE)
 
 
 lint:

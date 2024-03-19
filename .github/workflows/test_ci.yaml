@@ -6,6 +6,10 @@ on:
       python-version:
         required: true
         type: string
+      do-coverage:
+        required: true
+        type: boolean
+        default: false
       os:
         required: false
         type: string
@@ -27,24 +31,26 @@ jobs:
           python-version: ${{ inputs.python-version }}
 
       - name: Setup poetry
-        uses: Gr1N/setup-poetry@v9
+        run: pipx install poetry
 
-      - name: Cache Poetry
+      - name: Restore Cached Poetry
         uses: actions/cache@v4
         with:
           path: ~/.cache/pypoetry/virtualenvs
           key: ${{ inputs.os }}-poetry-${{ hashFiles('poetry.lock') }}
 
-      - name: Install dependencies
-        run: |
-          poetry install
-
       - name: Test with pytest
-        run: make test
+        run: |
+          poetry use $ {{ inputs.python-version }}
+          make test
+
+      - name: Rename coverage file
+        if: inputs.do-coverage
+        run: mv .coverage .coverage.${{ inputs.python-version }}
 
       - name: Upload artifact
-        if: ${{ inputs.python-version  == '3.12' }}
+        if: inputs.do-coverage
         uses: actions/upload-artifact@v4
         with:
           name: coverage-data
-          path: .coverage
+          path: .coverage.${{ inputs.python-version }}
