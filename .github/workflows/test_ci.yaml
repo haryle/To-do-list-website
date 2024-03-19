@@ -47,7 +47,7 @@ jobs:
         run: make test
 
       - name: Upload artifact
-        if: ${{ input.python-version }} == '3.12'
+        if: ${{ inputs.python-version }} == '3.12'
         uses: actions/upload-artifact@v3
         with:
           files: .coverage
