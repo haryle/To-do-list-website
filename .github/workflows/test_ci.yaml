@@ -48,9 +48,9 @@ jobs:
         if: inputs.do-coverage
         run: mv .coverage .coverage.${{ inputs.python-version }}
 
-      - name: Upload artifact
+      - name: Upload coverage
         if: inputs.do-coverage
-        uses: actions/upload-artifact@v4
+        uses: codecov/codecov-action@v4
         with:
-          name: coverage-data
-          path: .coverage.${{ inputs.python-version }}
+            files: coverage.xml
+            token: ${{ secrets.CODECOV_TOKEN }}
