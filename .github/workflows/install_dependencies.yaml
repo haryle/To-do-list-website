@@ -27,7 +27,7 @@ jobs:
           python-version: ${{ inputs.python-version }}
 
       - name: Setup poetry
-        run: pipx install poetry
+        run: pip install poetry
 
       - name: Install dependencies
         run: |
@@ -38,4 +38,4 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.cache/pypoetry/virtualenvs
-          key: ${{ inputs.os }}-poetry-${{ hashFiles('poetry.lock') }}
+          key: ${{ inputs.os }}-poetry-${{inputs.python-version}}-${{ hashFiles('poetry.lock') }}

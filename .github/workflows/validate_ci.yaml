@@ -25,13 +25,13 @@ jobs:
           python-version: ${{ inputs.python-version }}
 
       - name: Set up Poetry
-        run: pipx install poetry
+        run: pip install poetry
 
       - name: Restore Cache Venv
         uses: actions/cache@v4
         with:
           path: ~/.cache/pypoetry/virtualenvs
-          key: ${{ inputs.os }}-poetry-${{ hashFiles('poetry.lock') }}
+          key: ${{ inputs.os }}-poetry-${{inputs.python-version}}-${{ hashFiles('poetry.lock') }}
 
       - name: Run Mypy
         run: |
