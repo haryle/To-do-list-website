@@ -31,7 +31,7 @@ jobs:
           python-version: ${{ inputs.python-version }}
 
       - name: Setup poetry
-        run: pip install poetry
+        run: pipx install poetry
 
       - name: Restore Cached Poetry
         uses: actions/cache@v4

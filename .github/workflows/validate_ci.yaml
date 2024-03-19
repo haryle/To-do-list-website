@@ -25,7 +25,7 @@ jobs:
           python-version: ${{ inputs.python-version }}
 
       - name: Set up Poetry
-        run: pip install poetry
+        run: pipx install poetry
 
       - name: Restore Cache Venv
         uses: actions/cache@v4
