@@ -2,17 +2,19 @@ name: Validate
 
 on:
   workflow_call:
-    os:
-      required: false
-      type: string
-      default: "ubuntu-latest"
-    python-version:
-      required: false
-      type: string
-      default: "3.12"
+    inputs:
+      os:
+        required: false
+        type: string
+        default: "ubuntu-latest"
+      python-version:
+        required: false
+        type: string
+        default: "3.12"
 
 jobs:
   validate:
+    runs-on: ${{inputs.os }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
