@@ -50,4 +50,4 @@ jobs:
 
       - name: Upload coverage
         if: inputs.do-coverage
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v3.2.4
