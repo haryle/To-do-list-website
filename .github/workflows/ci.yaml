@@ -6,22 +6,10 @@ on:
   push:
 
 jobs:
-  setup:
-    name: "Setup (${{ matrix.python-version }})"
-    strategy:
-      fail-fast: true
-      matrix:
-        python-version: ["3.11", "3.12"]
-    uses: ./.github/workflows/install_dependencies.yaml
-    with:
-      python-version: ${{ matrix.python-version }}
-
   validate:
-    needs: setup
     uses: ./.github/workflows/validate_ci.yaml
 
   test:
-    needs: setup
     name: "test (${{ matrix.python-version }})"
     strategy:
       fail-fast: true
@@ -32,6 +20,17 @@ jobs:
       python-version: ${{ matrix.python-version }}
       do-coverage: ${{ matrix.python-version == 3.12 }}
 
-  coverage:
-    needs: test
-    uses: ./.github/workflows/upload_coverage.yaml
+  sonar:
+    needs:
+      - test
+      - validate
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: SonarCloud Scan
+        uses: sonarsource/sonarcloud-github-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
