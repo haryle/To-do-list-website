@@ -6,10 +6,6 @@ on:
       python-version:
         required: true
         type: string
-      coverage:
-        required: false
-        type: boolean
-        default: true
       os:
         required: false
         type: string

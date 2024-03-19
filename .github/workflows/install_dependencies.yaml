@@ -1,20 +1,22 @@
-name: Validate
+name: Install
 
 on:
   workflow_call:
     inputs:
+      python-version:
+        required: true
+        type: string
       os:
         required: false
         type: string
         default: "ubuntu-latest"
-      python-version:
-        required: false
-        type: string
-        default: "3.12"
 
 jobs:
-  validate:
-    runs-on: ${{inputs.os }}
+  test:
+    runs-on: ${{inputs.os}}
+    defaults:
+      run:
+        shell: bash
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -27,16 +29,19 @@ jobs:
       - name: Setup poetry
         uses: Gr1N/setup-poetry@v9
 
-      - name: Restore Cache
-        uses: actions/cache/restore@v4
+      - name: Install dependencies
+        run: |
+          poetry install
+
+      - name: Cache Poetry
+        uses: actions/cache/save@v4
         with:
           path: ~/.cache/pypoetry/virtualenvs
           key: ${{ inputs.os }}-poetry-${{ hashFiles('poetry.lock') }}
 
-      - name: Run Mypy
-        run: |
-          make analysis 
-
-      - name: Run Ruff
-        run: |
-          make lint
+      - name: Upload artifact
+        if: ${{ inputs.python-version  == '3.12' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-data
+          path: .coverage

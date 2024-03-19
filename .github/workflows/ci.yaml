@@ -6,7 +6,16 @@ on:
   push:
 
 jobs:
+  setup:
+    name: "Setup (${{ matrix.python-version }})"
+    strategy:
+      fail-fast: true
+      matrix:
+        python-version: ["3.11", "3.12"]
+    uses: ./.github/workflows/install_dependencies.yaml
+
   validate:
+    needs: setup
     uses: ./.github/workflows/validate_ci.yaml
 
 #  test:
