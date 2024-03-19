@@ -21,6 +21,7 @@ jobs:
     uses: ./.github/workflows/validate_ci.yaml
 
   test:
+    needs: setup
     name: "test (${{ matrix.python-version }})"
     strategy:
       fail-fast: true

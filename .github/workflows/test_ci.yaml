@@ -41,7 +41,7 @@ jobs:
 
       - name: Test with pytest
         run: |
-          poetry use $ {{ inputs.python-version }}
+          poetry env use $ {{ inputs.python-version }}
           make test
 
       - name: Rename coverage file
