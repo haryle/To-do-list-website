@@ -12,7 +12,7 @@ on:
         default: "ubuntu-latest"
 
 jobs:
-  test:
+  setup:
     runs-on: ${{inputs.os}}
     defaults:
       run:
@@ -38,10 +38,3 @@ jobs:
         with:
           path: ~/.cache/pypoetry/virtualenvs
           key: ${{ inputs.os }}-poetry-${{ hashFiles('poetry.lock') }}
-
-      - name: Upload artifact
-        if: ${{ inputs.python-version  == '3.12' }}
-        uses: actions/upload-artifact@v4
-        with:
-          name: coverage-data
-          path: .coverage
