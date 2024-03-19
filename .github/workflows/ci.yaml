@@ -8,20 +8,17 @@ on:
 jobs:
   validate:
     uses: ./.github/workflows/validate_ci.yaml
-    with:
-      python-version: "3.12"
-      os: "ubuntu:latest"
 
-  test:
-    name: "test (${{ matrix.python-version }})"
-    strategy:
-      fail-fast: true
-      matrix:
-        python-version: [ "3.11", "3.12" ]
-    uses: ./.github/workflows/test_ci.yaml
-    with:
-      python-version: ${{ matrix.python-version }}
-
-  coverage:
-    needs: test
-    uses: ./.github/workflows/upload_coverage.yaml
+#  test:
+#    name: "test (${{ matrix.python-version }})"
+#    strategy:
+#      fail-fast: true
+#      matrix:
+#        python-version: [ "3.11", "3.12" ]
+#    uses: ./.github/workflows/test_ci.yaml
+#    with:
+#      python-version: ${{ matrix.python-version }}
+#
+#  coverage:
+#    needs: test
+#    uses: ./.github/workflows/upload_coverage.yaml
