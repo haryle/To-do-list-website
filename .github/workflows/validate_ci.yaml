@@ -1,0 +1,44 @@
+name: Validate
+
+on:
+  workflow_call:
+    os:
+      required: false
+      type: string
+      default: "ubuntu-latest"
+    python-version:
+      required: false
+      type: string
+      default: "3.12"
+
+jobs:
+  validate:
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python ${{ inputs.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ inputs.python-version }}
+
+      - name: Setup poetry
+        uses: Gr1N/setup-poetry@v8
+
+      - name: Cache Poetry
+        uses: actions/cache@v2
+        with:
+          path: ~/.cache/pypoetry/virtualenvs
+          key: ${{ inputs.os }}-poetry-${{ hashFiles('poetry.lock') }}
+
+      - name: Install dependencies
+        run: |
+          poetry install
+
+      - name: Run Mypy
+        run: |
+          make analysis 
+
+      - name: Run Ruff
+        run: |
+          make lint

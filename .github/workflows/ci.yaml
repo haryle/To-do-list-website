@@ -1,0 +1,21 @@
+name: CI
+
+on:
+  pull_request:
+  merge_group:
+  push:
+    branches:
+      - main
+
+jobs:
+  validate:
+    uses: ./.github.workflows/validate_ci.yaml
+
+  test: "test (${{ matrix.python-version }})"
+  strategy:
+    failfast: true
+    matrix:
+      python-version: [ "3.11", "3.12" ]
+    uses: ./.github.workflows/test_ci.yaml
+    with:
+      python-version: ${{ matrix.python-version }}

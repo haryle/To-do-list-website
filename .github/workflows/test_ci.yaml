@@ -1,31 +1,55 @@
-name: Python package
+name: Test
 
-on: [ push ]
+on:
+  workflow_call:
+    inputs:
+      python-version:
+        required: true
+        type: string
+      coverage:
+        required: false
+        type: boolean
+        default: true
+      os:
+        required: false
+        type: string
+        default: "ubuntu-latest"
 
 jobs:
-  build:
-
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version: ["3.11", "3.12" ]
+  test:
+    runs-on: ${{inputs.os}}
+    defaults:
+      run:
+        shell: bash
     steps:
-      - uses: actions/checkout@v3
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python ${{ inputs.python-version }}
+        uses: actions/setup-python@v5
         with:
-          python-version: ${{ matrix.python-version }}
+          python-version: ${{ inputs.python-version }}
+
+      - name: Setup poetry
+        uses: Gr1N/setup-poetry@v8
+
+      - name: Cache Poetry
+        uses: actions/cache@v2
+        with:
+          path: ~/.cache/pypoetry/virtualenvs
+          key: ${{ inputs.os }}-poetry-${{ hashFiles('poetry.lock') }}
+
       - name: Install dependencies
         run: |
-          python -m pip install --upgrade pip
-          pip install poetry
           poetry install
+
       - name: Test with pytest
-        run: |
-          make test
-      - name: Lint with Ruff
-        run: |
-          make lint
-      - name: Static Analysis with mypy
-        run: |
-          make analysis
+        run: make test
+
+      - name: Rename Coverage
+        run: mv .coverage .coverage.${{ inputs.python-version }}
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: coverage-data
+          path: .coverage.${{ inputs.python-version }}
