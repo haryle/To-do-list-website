@@ -1,15 +1,26 @@
+CMD=poetry run
+MODULE=backend
 
 dev:
-	poetry  run litestar --app backend.app:app run --debug --reload
+	$(CMD) litestar --app $(MODULE).app:app run --debug --reload
 
 
 prod:
-	poetry run litestar --app backend.app:app run
+	$(CMD) litestar --app $(MODULE).app:app run
 
 
 test:
-	poetry run pytest
+	$(CMD) pytest --cov-report term-missing --cov=$(MODULE)
+
+
+lint:
+	$(CMD) ruff check $(MODULE)
+
+
+analysis:
+	$(CMD) mypy $(MODULE)
 
 
 clean:
+	clear
 	rm -rf *.sqlite
