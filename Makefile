@@ -1,6 +1,9 @@
 CMD=poetry run
 MODULE=backend
 
+install:
+	poetry install
+
 dev:
 	$(CMD) litestar --app $(MODULE).app:app run --debug --reload
 
@@ -10,7 +13,7 @@ prod:
 
 
 test:
-	$(CMD) pytest --cov-report term-missing --cov=$(MODULE)
+	$(CMD) pytest tests 	--cov=$(MODULE)
 
 
 lint:
