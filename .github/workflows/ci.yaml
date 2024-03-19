@@ -22,6 +22,6 @@ jobs:
     with:
       python-version: ${{ matrix.python-version }}
 
-  upload-test-coverage:
+  coverage:
     needs: test
     uses: ./.github/workflows/upload_coverage.yaml
