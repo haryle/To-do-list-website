@@ -24,6 +24,12 @@ analysis:
 	$(CMD) mypy $(MODULE)
 
 
+coverage:
+	$(CMD) coverage xml -i
+
+
 clean:
 	clear
 	rm -rf *.sqlite
+	rm .coverage
+	rm coverage.xml
