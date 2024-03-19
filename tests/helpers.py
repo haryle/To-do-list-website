@@ -67,7 +67,7 @@ class ResponseValidator:
 class AbstractFixtureManager(Generic[T]):
     model_class: ClassVar[type[Base]]
 
-    def __class_getitem__(cls, model_type: type[T]) -> Self:
+    def __class_getitem__(cls, model_type: type[T]):
         cls.model_class = model_type
         cls_dict = {"model_class": cls.model_class}
         return type(f"FixtureManager[{model_type.__name__}]", (cls,), cls_dict)
@@ -126,8 +126,8 @@ class AbstractBaseTestSuite(Generic[T]):
     update_item_success_hooks: ClassVar[list[Callable]] = [ResponseValidator.validate_item_updated]
     fixture_manager: ClassVar[AbstractFixtureManager]
 
-    def __class_getitem__(cls, model_type: type[T]) -> Self:
-        fixture_manager = AbstractFixtureManager[model_type](
+    def __class_getitem__(cls, model_type: type[T]):
+        fixture_manager = AbstractFixtureManager[model_type]( # type: ignore[valid-type]
             create_item_failure_hooks=cls.create_item_failure_hooks,
             create_item_success_hooks=cls.create_item_success_hooks,
             update_item_success_hooks=cls.update_item_success_hooks)

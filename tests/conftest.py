@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import Generator
 
 import pytest
 from advanced_alchemy.extensions.litestar import SQLAlchemyPlugin
@@ -10,7 +11,7 @@ from backend.router import ProjectController, TagController, TaskController
 
 
 @pytest.fixture(scope="module")
-def test_client() -> AsyncTestClient:
+def test_client() -> Generator[AsyncTestClient, None, None]:
     p = Path("test.sqlite")
     db_config = create_db_config("test.sqlite")
     app = Litestar(

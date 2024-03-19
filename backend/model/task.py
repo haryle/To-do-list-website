@@ -21,7 +21,7 @@ task_relation = Table(
 
 
 class Task(Base):
-    __tablename__ = "task_table"
+    __tablename__ = "task_table"  # type: ignore[assignment]
 
     title: Mapped[str] = mapped_column(unique=True)
     status: Mapped[bool]

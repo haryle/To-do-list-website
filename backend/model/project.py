@@ -6,7 +6,7 @@ from backend.model.task import Task
 
 
 class Project(Base):
-    __tablename__ = "project_table"
+    __tablename__: str = "project_table"  # type: ignore[assignment]
 
     title: Mapped[str] = mapped_column(unique=True)
 
