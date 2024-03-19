@@ -24,9 +24,6 @@ jobs:
         with:
           python-version: ${{ inputs.python-version }}
 
-      - name: Setup poetry
-        uses: Gr1N/setup-poetry@v9
-
       - name: Restore Cache
         uses: actions/cache/restore@v4
         with:
