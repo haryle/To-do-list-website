@@ -20,6 +20,7 @@ jobs:
       - name: Combine coverage files
         run: |
           python -Im pip install coverage covdefaults
+          python -Im coverage combine
           python -Im coverage xml -i
 
       - name: Upload report to Codecov
