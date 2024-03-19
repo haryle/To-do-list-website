@@ -23,6 +23,5 @@ jobs:
       python-version: ${{ matrix.python-version }}
 
   upload-test-coverage:
-    runs-on: ubuntu-latest
     needs: test
     uses: ./.github/workflows/upload_coverage.yaml
