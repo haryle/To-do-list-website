@@ -32,7 +32,6 @@ jobs:
       python-version: ${{ matrix.python-version }}
       do-coverage: ${{ matrix.python-version == 3.12 }}
 
-#
-#  coverage:
-#    needs: test
-#    uses: ./.github/workflows/upload_coverage.yaml
+  coverage:
+    needs: test
+    uses: ./.github/workflows/upload_coverage.yaml
