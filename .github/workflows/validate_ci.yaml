@@ -24,11 +24,8 @@ jobs:
         with:
           python-version: ${{ inputs.python-version }}
 
-      - name: Restore Poetry Cache
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache/pypoetry
-          key: ${{ inputs.os }}-poetry-cache
+      - name: Set up Poetry
+        run: pipx install poetry
 
       - name: Restore Cache Venv
         uses: actions/cache@v4
