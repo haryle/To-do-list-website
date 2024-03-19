@@ -1,0 +1,37 @@
+name: CI
+
+on:
+  pull_request:
+  merge_group:
+  push:
+
+jobs:
+  setup:
+    name: "Setup (${{ matrix.python-version }})"
+    strategy:
+      fail-fast: true
+      matrix:
+        python-version: ["3.11", "3.12"]
+    uses: ./.github/workflows/install_dependencies.yaml
+    with:
+      python-version: ${{ matrix.python-version }}
+
+  validate:
+    needs: setup
+    uses: ./.github/workflows/validate_ci.yaml
+
+  test:
+    needs: setup
+    name: "test (${{ matrix.python-version }})"
+    strategy:
+      fail-fast: true
+      matrix:
+        python-version: [ "3.11", "3.12" ]
+    uses: ./.github/workflows/test_ci.yaml
+    with:
+      python-version: ${{ matrix.python-version }}
+      do-coverage: ${{ matrix.python-version == 3.12 }}
+
+  coverage:
+    needs: test
+    uses: ./.github/workflows/upload_coverage.yaml
