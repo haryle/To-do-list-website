@@ -35,8 +35,10 @@ jobs:
 
       - name: Run Mypy
         run: |
+          poetry env use ${{ inputs.python-version }}
           make analysis 
 
       - name: Run Ruff
         run: |
+          poetry env use ${{ inputs.python-version }}
           make lint
