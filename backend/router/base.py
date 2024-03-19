@@ -27,7 +27,8 @@ async def read_items_by_attrs(
 ) -> Sequence[Any]:
     stmt = select(table)
     for attr, value in kwargs.items():
-        if value:
+        if value is not None:
+            print(value)
             stmt = stmt.where(table.__table__.c[attr] == value)
     result = await session.execute(stmt)
     return result.scalars().all()
