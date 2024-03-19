@@ -28,11 +28,11 @@ class Task(Base):
     description: Mapped[Optional[str]]
     deadline: Mapped[Optional[datetime.datetime]]
 
-    project_id: Mapped[UUID] = mapped_column(ForeignKey("project_table.id"))
+    project_id: Mapped[Optional[UUID]] = mapped_column(ForeignKey("project_table.id"))
 
     # Relations
     project: Mapped[Optional["Project"]] = relationship(
-        back_populates="tasks", lazy="selectin"
+        back_populates="tasks", lazy="selectin", info=dto_field("read-only")
     )
     children: Mapped[list["Task"]] = relationship(
         "Task",
