@@ -12,7 +12,7 @@ jobs:
   test:
     name: "test (${{ matrix.python-version }})"
     strategy:
-      failfast: true
+      fail-fast: true
       matrix:
         python-version: [ "3.11", "3.12" ]
     uses: ./.github/workflows/test_ci.yaml
