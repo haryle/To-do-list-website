@@ -18,7 +18,7 @@ tag_task_relation = Table(
 
 
 class Tag(Base):
-    __tablename__ = "tag_table"
+    __tablename__ = "tag_table" # type: ignore[assignment]
 
     name: Mapped[str] = mapped_column(unique=True)
 

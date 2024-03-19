@@ -21,18 +21,18 @@ task_relation = Table(
 
 
 class Task(Base):
-    __tablename__ = "task_table"
+    __tablename__ = "task_table"  # type: ignore[assignment]
 
-    title: Mapped[str]
+    title: Mapped[str] = mapped_column(unique=True)
     status: Mapped[bool]
     description: Mapped[Optional[str]]
     deadline: Mapped[Optional[datetime.datetime]]
 
-    project_id: Mapped[UUID] = mapped_column(ForeignKey("project_table.id"))
+    project_id: Mapped[Optional[UUID]] = mapped_column(ForeignKey("project_table.id"))
 
     # Relations
     project: Mapped[Optional["Project"]] = relationship(
-        back_populates="tasks", lazy="selectin"
+        back_populates="tasks", lazy="selectin", info=dto_field("read-only")
     )
     children: Mapped[list["Task"]] = relationship(
         "Task",

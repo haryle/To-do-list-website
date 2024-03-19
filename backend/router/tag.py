@@ -11,7 +11,7 @@ from backend.router.task import TaskDTO
 from backend.router.utils.DTO import DTOGenerator
 
 TagDTO = DTOGenerator[Tag](
-    read_kwargs={"max_nested_depth": 1},
+    read_kwargs={},
     write_kwargs={"exclude": {"tasks"}},
 )
 

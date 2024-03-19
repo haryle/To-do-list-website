@@ -4,7 +4,6 @@ from uuid import UUID
 
 from litestar import Controller, Router, delete, get, post, put
 from litestar.di import Provide
-from litestar.dto import DTOData
 from sqlalchemy import delete as remove
 from sqlalchemy import select
 from sqlalchemy.orm import DeclarativeBase
@@ -18,6 +17,7 @@ T = TypeVar("T", bound=DeclarativeBase)
 
 async def create_item(session: "AsyncSession", data: Any) -> Any:
     session.add(data)
+    await session.flush()
     return data
 
 
@@ -26,7 +26,8 @@ async def read_items_by_attrs(
 ) -> Sequence[Any]:
     stmt = select(table)
     for attr, value in kwargs.items():
-        if value:
+        if value is not None:
+            print(value)
             stmt = stmt.where(table.__table__.c[attr] == value)
     result = await session.execute(stmt)
     return result.scalars().all()
@@ -80,20 +81,20 @@ class BaseController(GenericController[T]):
     @get("/{id:uuid}")
     async def get_item_by_id(
             self, table: Any, transaction: "AsyncSession", id: UUID
-    ) -> T.__name__:
+    ) -> T.__name__:  # type: ignore[name-defined]
         return await read_item_by_id(session=transaction, table=table, id=id)
 
     @post()
     async def create_item(
-            self, transaction: "AsyncSession", data: T.__name__
-    ) -> T.__name__:
+            self, transaction: "AsyncSession", data: T.__name__  # type: ignore[name-defined]
+    ) -> T.__name__:  # type: ignore[name-defined]
         return await create_item(session=transaction, data=data)
 
     @put("/{id:uuid}")
     async def update_item(
             self, table: Any, transaction: "AsyncSession", id: UUID,
-            data: T.__name__
-    ) -> T.__name__:
+            data: T.__name__  # type: ignore[name-defined]
+    ) -> T.__name__:  # type: ignore[name-defined]
         result = await update_item(session=transaction, id=id, data=data, table=table)
         return result
 
