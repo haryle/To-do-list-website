@@ -31,7 +31,7 @@ jobs:
           python-version: ${{ inputs.python-version }}
 
       - name: Setup poetry
-        run: pipx install poetry
+        run: pip install poetry
 
       - name: Restore Cached Poetry
         uses: actions/cache@v4
@@ -41,7 +41,7 @@ jobs:
 
       - name: Test with pytest
         run: |
-          poetry env use $ {{ inputs.python-version }}
+          poetry env use ${{ inputs.python-version }}
           make test
 
       - name: Rename coverage file
