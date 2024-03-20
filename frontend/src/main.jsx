@@ -5,12 +5,14 @@ import {
   RouterProvider,
 } from "react-router-dom";
 import './index.css'
+import Root, {loader as loaderRoot} from './routes/root';
 
 
 const router = createBrowserRouter([
   {
     "path": "/",
-    element: <h1>Hello World</h1>,
+    element: <Root/>,
+    loader: loaderRoot,
   }
 ]);
 
