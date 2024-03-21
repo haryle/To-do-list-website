@@ -46,9 +46,7 @@ class ProjectController(BaseController[Project]):
 
     @get("/{id:uuid}/tasks", return_dto=ProjectTaskDTO)
     async def get_project_tasks(self, transaction: AsyncSession, id: UUID) -> Project:
-        stmt = (
-            select(Project).join_from(Task, Project).where(Project.id == id).distinct()
-        )
+        stmt = select(Project).outerjoin(Task).where(Project.id == id).distinct()
         result = await transaction.execute(stmt)
         processed = result.scalars().one()
         return processed
