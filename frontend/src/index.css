@@ -45,6 +45,19 @@ button {
   font-weight: 500;
 }
 
+.flexSpan {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.flexSpan .new-item-button{
+  font-size: 1.3rem;
+  display: flex;
+  align-items: center;
+}
+
+
 textarea:hover,
 input:hover,
 button:hover {
@@ -223,8 +236,6 @@ i {
 #sidebar h2{
   font-size: 1.2rem;
   font-weight: 500;
-  margin-top: 1rem;
-  margin-bottom: 1rem;
   align-items: center;
   display: flex;
 }
