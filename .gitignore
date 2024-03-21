@@ -317,3 +317,5 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+*.sqlite

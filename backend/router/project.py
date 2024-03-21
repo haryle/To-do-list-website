@@ -8,10 +8,25 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from backend.model import Task
 from backend.model.project import Project
 from backend.router.base import BaseController
-from backend.router.task import TaskDTO
 from backend.router.utils.DTO import DTOGenerator
+from litestar.contrib.sqlalchemy.dto import SQLAlchemyDTO, SQLAlchemyDTOConfig
 
 ProjectDTO = DTOGenerator[Project]()
+
+
+class ProjectTaskDTO(SQLAlchemyDTO[Project]):
+    config = SQLAlchemyDTOConfig(
+        max_nested_depth=1,
+        include={
+            "title",
+            "id",
+            "tasks.0.id",
+            "tasks.0.title",
+            "tasks.0.status",
+            "tasks.0.deadline",
+            "tasks.0.description",
+        },
+    )
 
 
 class ProjectController(BaseController[Project]):
@@ -21,7 +36,7 @@ class ProjectController(BaseController[Project]):
 
     @get()
     async def get_projects(
-            self, transaction: AsyncSession, title: str | None = None
+        self, transaction: AsyncSession, title: str | None = None
     ) -> Sequence[Project]:
         stmt = select(Project)
         if title:
@@ -29,12 +44,9 @@ class ProjectController(BaseController[Project]):
         result = await transaction.execute(stmt)
         return result.scalars().all()
 
-    @get("/{id:uuid}/tasks", return_dto=TaskDTO.read_dto)
-    async def get_project_tasks(
-            self,
-            transaction: AsyncSession,
-            id: UUID
-    ) -> Sequence[Task]:
-        stmt = select(Task).join_from(Task, Project).where(Project.id == id)
+    @get("/{id:uuid}/tasks", return_dto=ProjectTaskDTO)
+    async def get_project_tasks(self, transaction: AsyncSession, id: UUID) -> Project:
+        stmt = select(Project).outerjoin(Task).where(Project.id == id).distinct()
         result = await transaction.execute(stmt)
-        return result.scalars().all()
+        processed = result.scalars().one()
+        return processed

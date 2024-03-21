@@ -12,7 +12,10 @@ class Project(Base):
 
     # Relationship
     tasks: Mapped[list["Task"]] = relationship(
-        back_populates="project", lazy="selectin", info=dto_field("read-only")
+        back_populates="project",
+        lazy="selectin",
+        info=dto_field("read-only"),
+        cascade="all, delete-orphan",
     )
 
     def __repr__(self) -> str:

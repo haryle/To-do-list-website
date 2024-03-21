@@ -45,6 +45,23 @@ button {
   font-weight: 500;
 }
 
+.flexSpan {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+#sidebar .flexSpan a{
+  font-size: 1.5rem;
+  display: flex;
+  align-items: center;
+  padding-bottom: 0.2em;
+  font-family: inherit;
+  color: #3992ff;
+  font-weight: 500;
+}
+
+
 textarea:hover,
 input:hover,
 button:hover {
@@ -186,14 +203,18 @@ form[action$="destroy"] button {
   }
 }
 
+#task-nav-content,
 #sidebar nav {
   padding-top: 0rem;
 }
 
+#task-nav-content a span,
 #sidebar nav a span {
   float: right;
   color: #eeb004;
 }
+
+#task-nav-content a.active span,
 #sidebar nav a.active span {
   color: inherit;
 }
@@ -201,6 +222,8 @@ form[action$="destroy"] button {
 i {
   color: #818181;
 }
+
+#task-nav-content .active i, 
 #sidebar nav .active i {
   color: inherit;
 }
@@ -223,12 +246,11 @@ i {
 #sidebar h2{
   font-size: 1.2rem;
   font-weight: 500;
-  margin-top: 1rem;
-  margin-bottom: 1rem;
   align-items: center;
   display: flex;
 }
 
+#task-nav-content a,
 #sidebar nav a {
   display: flex;
   align-items: center;
@@ -243,15 +265,18 @@ i {
   gap: 1rem;
 }
 
+#task-nav-content a:hover, 
 #sidebar nav a:hover {
   background: #e3e3e3;
 }
 
+#task-nav-content a:active,
 #sidebar nav a.active {
   background: hsl(224, 98%, 58%);
   color: white;
 }
 
+#task-nav-content a.pending,
 #sidebar nav a.pending {
   color: hsl(224, 98%, 58%);
 }
@@ -397,4 +422,37 @@ i {
   align-items: center;
   justify-content: center;
   width: 100%;
+}
+
+nav div{
+  display: flex;
+}
+
+nav div input{
+  box-shadow: none
+}
+
+div.project-title{
+  display: flex;
+  align-items: center;
+}
+
+div.project-title input{
+  font-size: 2rem;
+  margin-block-start: 0.67rem;
+  margin-block-end: 0.67rem;
+}
+
+div.project-title form.title{
+  float: left;
+  width: 75%;
+}
+
+div.project-title div.buttons{
+  float: right;
+  width: 25%;
+}
+
+#detail div.buttons{
+  display: flex;
 }
