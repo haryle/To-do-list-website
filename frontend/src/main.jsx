@@ -5,14 +5,28 @@ import {
   RouterProvider,
 } from "react-router-dom";
 import './index.css'
-import Root, {loader as loaderRoot} from './routes/root';
-
+import Root from './routes/root';
+import { loaderProject } from './routes/helper';
+import ErrorPage from './error-page';
+import ProjectPage from './routes/project';
 
 const router = createBrowserRouter([
   {
     "path": "/",
     element: <Root/>,
-    loader: loaderRoot,
+    loader: loaderProject,
+    errorElement: <ErrorPage/>,
+    children: [
+      {
+        errorElement: <ErrorPage/>,
+        children: [
+          {
+            "path": "/project/:projectId",
+            element: <ProjectPage/>,
+          }
+        ]
+      }
+    ]
   }
 ]);
 
