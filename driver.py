@@ -18,12 +18,12 @@ Base.metadata.create_all(engine)
 
 session = create_session(engine)
 
-first_project = Project(title="first_project")
-second_project = Project(title="second_project")
-first_task = Task(title="first_task", status=False)
+first_project = Project(title="First Project")
+second_project = Project(title="Second Project")
+first_task = Task(title="First Task", status=False)
 first_task.project = first_project
 
-second_task = Task(title="second_task", status=False)
+second_task = Task(title="Second Task", status=False)
 second_task.project = first_project
 second_task.parents.append(first_task)
 
