@@ -6,9 +6,17 @@ import {
 } from "react-router-dom";
 import './index.css'
 import Root from './routes/root';
-import { loaderProject } from './routes/helper';
+import { 
+  loaderProject, 
+  loaderProjectId, 
+  loaderDefaultProject, 
+  actionCreateProject, 
+  actionUpdateProject,
+  actionDeleteProject
+} from './routes/helper';
 import ErrorPage from './error-page';
 import ProjectPage from './routes/project';
+import CreateProject from './routes/create';
 
 const router = createBrowserRouter([
   {
@@ -23,6 +31,21 @@ const router = createBrowserRouter([
           {
             "path": "/project/:projectId",
             element: <ProjectPage/>,
+            loader: loaderProjectId
+          },
+          {
+            "path": "/project/:projectId/delete",
+            action: actionDeleteProject,
+          },
+          {
+            "path": "/project/:projectId/update",
+            action: actionUpdateProject,
+          },
+          {
+            "path": "/project/default/create",
+            element: <CreateProject />,
+            loader: loaderDefaultProject,
+            action: actionCreateProject,
           }
         ]
       }
